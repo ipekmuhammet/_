@@ -23,23 +23,13 @@ services:
         networks:
             - mongo
 
-    mongo3:
-        image: mongo
-        command: mongod --replSet "rs0"
-        deploy:
-            placement:
-                constraints:
-                    - node.Role==Worker
-        networks:
-            - mongo
-
     redis-sentinel:
         image: thomasjpfan/redis-sentinel:${TAG:-latest}
         environment:
             - REDIS_IP=redis-zero
             - REDIS_MASTER_NAME=redismaster
         deploy:
-            replicas: 3
+            replicas: 2
         networks:
             - redis
     
@@ -52,7 +42,7 @@ services:
         ports:
             - 6379:6379
         deploy:
-            replicas: 3
+            replicas: 2
         networks:
             - redis
 
@@ -71,7 +61,7 @@ services:
         networks:
             - elasticsearch_distributed
         deploy:
-            replicas: 3
+            replicas: 2
             restart_policy:
                 delay: 30s
                 max_attempts: 10
