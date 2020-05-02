@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  mongo1:
+    image: mongo
+    command: mongod --replSet "rs0"
+    ports:
+      - 27017:27017
+    deploy:
+      placement:
+        constraints:
+          - node.Role==Manager
+    networks:
+      - mongo
+
+  mongo2:
+    image: mongo
+    command: mongod --replSet "rs0"
+    deploy:
+      placement:
+        constraints:
+          - node.Role==Worker
+    networks:
+      - mongo
+
+  mongo3:
+    image: mongo
+    command: mongod --replSet "rs0"
+    deploy:
+      placement:
+        constraints:
+          - node.Role==Worker
+    networks:
+      - mongo
+
+networks:
+  mongo:

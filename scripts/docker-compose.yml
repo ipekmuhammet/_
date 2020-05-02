@@ -1,0 +1,91 @@
+version: '3.1'
+
+services:
+    mongo1:
+        image: mongo
+        command: mongod --replSet "rs0"
+        ports:
+        - 27017:27017
+        deploy:
+        placement:
+            constraints:
+            - node.Role==Manager
+        networks:
+        - mongo
+
+    mongo2:
+        image: mongo
+        command: mongod --replSet "rs0"
+        deploy:
+        placement:
+            constraints:
+            - node.Role==Worker
+        networks:
+            - mongo
+
+    mongo3:
+        image: mongo
+        command: mongod --replSet "rs0"
+        deploy:
+        placement:
+            constraints:
+            - node.Role==Worker
+        networks:
+            - mongo
+
+    redis-sentinel:
+        image: thomasjpfan/redis-sentinel:${TAG:-latest}
+        environment:
+            - REDIS_IP=redis-zero
+             - REDIS_MASTER_NAME=redismaster
+        deploy:
+            replicas: 3
+        networks:
+            - redis
+    
+    redis:
+        image: thomasjpfan/redis-look:${TAG:-latest}
+        environment:
+            - REDIS_SENTINEL_IP=redis-sentinel
+            - REDIS_MASTER_NAME=redismaster
+            - REDIS_SENTINEL_PORT=26379
+        ports:
+            - 6379:6379
+        deploy:
+            replicas: 3
+        networks:
+            - redis
+
+        elasticsearch1:
+            image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
+            hostname: elasticsearch1
+            volumes:
+                - elasticsearch1-data:/usr/share/elasticsearch/data
+            environment:
+                - cluster.name=elasticsearch-cluster
+                - "discovery.zen.ping.unicast.hosts=tasks.elasticsearch1"
+                - "network.host=0.0.0.0"
+                - "node.max_local_storage_nodes=2"
+            ports:
+                - "9200:9200"
+            networks:
+                - elasticsearch_distributed
+            deploy:
+                replicas: 3
+                restart_policy:
+                    delay: 30s
+                    max_attempts: 10
+                    window: 120s
+
+networks:
+    mongo:
+        external: true
+
+    redis:
+        external: true
+
+    elasticsearch_distributed:
+        driver: overlay
+
+volumes:
+    elasticsearch1-data:
