@@ -7,9 +7,9 @@ services:
         ports:
         - 27017:27017
         deploy:
-        placement:
-            constraints:
-            - node.Role==Manager
+            placement:
+                constraints:
+                - node.Role==Manager
         networks:
         - mongo
 
@@ -17,9 +17,9 @@ services:
         image: mongo
         command: mongod --replSet "rs0"
         deploy:
-        placement:
-            constraints:
-            - node.Role==Worker
+            placement:
+                constraints:
+                - node.Role==Worker
         networks:
             - mongo
 
@@ -27,9 +27,9 @@ services:
         image: mongo
         command: mongod --replSet "rs0"
         deploy:
-        placement:
-            constraints:
-            - node.Role==Worker
+            placement:
+                constraints:
+                - node.Role==Worker
         networks:
             - mongo
 
