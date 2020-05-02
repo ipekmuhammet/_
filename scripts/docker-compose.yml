@@ -79,7 +79,6 @@ services:
 
 networks:
     mongo:
-        external: true
 
     redis:
         external: true
