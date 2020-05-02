@@ -5,13 +5,13 @@ services:
         image: mongo
         command: mongod --replSet "rs0"
         ports:
-        - 27017:27017
+        	- 27017:27017
         deploy:
             placement:
                 constraints:
-                - node.Role==Manager
+                	- node.Role==Manager
         networks:
-        - mongo
+        	- mongo
 
     mongo2:
         image: mongo
@@ -19,7 +19,7 @@ services:
         deploy:
             placement:
                 constraints:
-                - node.Role==Worker
+                	- node.Role==Worker
         networks:
             - mongo
 
@@ -29,7 +29,7 @@ services:
         deploy:
             placement:
                 constraints:
-                - node.Role==Worker
+                	- node.Role==Worker
         networks:
             - mongo
 
@@ -37,7 +37,7 @@ services:
         image: thomasjpfan/redis-sentinel:${TAG:-latest}
         environment:
             - REDIS_IP=redis-zero
-             - REDIS_MASTER_NAME=redismaster
+            - REDIS_MASTER_NAME=redismaster
         deploy:
             replicas: 3
         networks:
